@@ -3,97 +3,159 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Deteksi Produk dengan Webcam</title>
+  <title>Pemindai Spesifikasi HP</title>
   <style>
     body {
       font-family: 'Poppins', sans-serif;
-      background: #D8B7DD; /* Warna latar belakang ungu pastel */
+      background: linear-gradient(to bottom right, #fbeaff, #fdf0f0);
       margin: 0;
       padding: 0;
+      color: #3c2a4d;
       text-align: center;
-      color: #333;
     }
 
     h1 {
       margin-top: 30px;
-      font-size: 2.5em;
-      color: #6c5b7b; /* Warna ungu pastel untuk judul */
+      font-size: 2.7em;
+      color: #6d2e91;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
     }
 
     #buttons {
-      margin-top: 20px;
+      margin: 30px 0;
     }
 
     button {
-      background-color: #f6a5c0; /* Warna pastel pink */
+      background: linear-gradient(45deg, #b5838d, #6d597a);
       color: white;
-      padding: 15px 30px;
-      border: none;
-      border-radius: 10px;
-      font-size: 18px;
-      cursor: pointer;
-      transition: transform 0.2s ease, background-color 0.3s;
+      padding: 14px 30px;
       margin: 10px;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease-in-out;
     }
 
     button:hover {
-      background-color: #f08c9d; /* Warna pink lebih terang saat hover */
-      transform: scale(1.1);
+      transform: translateY(-3px);
+      background: linear-gradient(45deg, #6d597a, #b5838d);
     }
 
     #webcam-video {
-      border: 5px solid #f3f4f6; /* Warna border yang lebih lembut */
       border-radius: 15px;
-      margin-top: 20px;
       width: 80%;
       max-width: 600px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      margin-top: 20px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     }
 
     #result, #recording {
-      margin-top: 30px;
+      margin-top: 25px;
       padding: 20px;
-      background-color: rgba(255, 255, 255, 0.8); /* Warna putih dengan sedikit transparansi */
+      background-color: #ffffffcc;
       border-radius: 10px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-      max-width: 80%;
+      max-width: 90%;
       margin-left: auto;
       margin-right: auto;
-    }
-
-    #result h3 {
-      font-size: 1.5em;
-      margin: 10px 0;
-      color: #6c5b7b; /* Warna ungu pastel */
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     }
 
     #product-info {
       margin-top: 30px;
-      padding: 20px;
-      background-color: #fff;
-      border-radius: 10px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-      width: 80%;
+      padding: 25px;
+      background-color: #ffffff;
+      border-radius: 15px;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.1);
+      width: 90%;
       margin-left: auto;
       margin-right: auto;
-      color: #6c5b7b;
+      color: #4A4E69;
+      transition: 0.3s ease;
+    }
+
+    #product-info:hover {
+      transform: scale(1.01);
     }
 
     .info-item {
-      margin-bottom: 10px;
+      margin: 10px 0;
+      font-size: 1.1em;
     }
 
-    canvas {
+    canvas, #loading {
       display: none;
     }
 
-    @media (max-width: 600px) {
-      #webcam-video {
-        width: 100%;
-      }
+    .loader {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #b5838d;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      animation: spin 1s linear infinite;
+      margin: 20px auto;
+    }
 
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    #history-section {
+      margin-top: 40px;
+      padding: 20px;
+      background-color: #fff0f5;
+      border-radius: 15px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      width: 90%;
+      margin-left: auto;
+      margin-right: auto;
+      color: #4A4E69;
+    }
+
+    #history-list li {
+      padding: 8px 12px;
+      margin: 5px 0;
+      background-color: #fbeaff;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    #history-list li:hover {
+      background-color: #e2cfea;
+    }
+
+    #clear-history-button {
+      margin-top: 15px;
+      background-color: #d62828;
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    #clear-history-button:hover {
+      background-color: #a31c1c;
+    }
+
+    @media (max-width: 600px) {
       button {
         width: 90%;
+      }
+
+      h1 {
+        font-size: 2em;
+      }
+
+      #product-info {
+        padding: 15px;
       }
     }
   </style>
@@ -104,10 +166,12 @@
   <div id="buttons">
     <button id="start-button">Aktifkan Kamera</button>
     <button id="capture-button" disabled>Ambil Gambar</button>
+    <button id="reset-button">Reset</button>
   </div>
 
   <video id="webcam-video" autoplay playsinline></video>
   <canvas id="canvas" width="320" height="240"></canvas>
+  <div id="loading" class="loader"></div>
 
   <div id="result"><strong>Hasil scan akan muncul di sini.</strong></div>
   <div id="recording"></div>
@@ -121,17 +185,31 @@
     <div id="product-description" class="info-item"></div>
   </div>
 
+  <div id="history-section">
+    <h3>Histori Pencarian</h3>
+    <ul id="history-list" style="list-style: none; padding: 0;"></ul>
+    <button id="clear-history-button">Hapus Histori</button>
+  </div>
+
+  <audio id="success-sound" src="https://www.soundjay.com/buttons/sounds/button-09.mp3" preload="auto"></audio>
+
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.21.0/dist/tf.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8/dist/teachablemachine-image.min.js"></script>
 
   <script>
     const startButton = document.getElementById('start-button');
     const captureButton = document.getElementById('capture-button');
+    const resetButton = document.getElementById('reset-button');
+
     const webcamVideo = document.getElementById('webcam-video');
     const resultDiv = document.getElementById('result');
     const recordingDiv = document.getElementById('recording');
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
+    const loading = document.getElementById('loading');
+
+    const historyList = document.getElementById('history-list');
+    const clearHistoryButton = document.getElementById('clear-history-button');
 
     const URL = 'https://teachablemachine.withgoogle.com/models/5s_pRcfX8/';
     let model;
@@ -179,9 +257,11 @@
     }
 
     async function predictImage() {
+      showLoader();
       ctx.drawImage(webcamVideo, 0, 0, canvas.width, canvas.height);
-
       const prediction = await model.predict(canvas);
+      hideLoader();
+
       if (prediction.length > 0) {
         const top = prediction.sort((a, b) => b.probability - a.probability)[0];
         displayResult(top);
@@ -190,21 +270,56 @@
 
     function displayResult(prediction) {
       const className = prediction.className;
-
       if (productDatabase[className] && prediction.probability > 0.7) {
         resultDiv.innerHTML = `<h3>${className} Terdeteksi</h3>`;
+        document.getElementById('success-sound').play();
 
-        // Menampilkan informasi produk
         document.getElementById('product-name').innerHTML = `<strong>Nama:</strong> ${className}`;
         document.getElementById('product-category').innerHTML = `<strong>Kamera:</strong> ${productDatabase[className].camera}`;
         document.getElementById('product-price').innerHTML = `<strong>Tahun Rilis:</strong> ${productDatabase[className].releaseYear}`;
         document.getElementById('product-stock').innerHTML = `<strong>Ukuran Layar:</strong> ${productDatabase[className].screenSize}`;
         document.getElementById('product-description').innerHTML = `<strong>Baterai:</strong> ${productDatabase[className].battery}`;
-        
+
+        addToHistory(className);
       } else {
         resultDiv.innerHTML = `<p>Produk tidak dikenali atau keyakinan rendah.</p>`;
       }
     }
+
+    function resetAll() {
+      resultDiv.innerHTML = `<strong>Hasil scan akan muncul di sini.</strong>`;
+      recordingDiv.textContent = "";
+      document.getElementById('product-name').innerHTML = '';
+      document.getElementById('product-category').innerHTML = '';
+      document.getElementById('product-price').innerHTML = '';
+      document.getElementById('product-stock').innerHTML = '';
+      document.getElementById('product-description').innerHTML = '';
+    }
+
+    function showLoader() {
+      loading.style.display = 'block';
+    }
+
+    function hideLoader() {
+      loading.style.display = 'none';
+    }
+
+    function addToHistory(productName) {
+      const li = document.createElement('li');
+      li.textContent = productName;
+      li.addEventListener('click', () => {
+        if (productDatabase[productName]) {
+          displayResult({ className: productName, probability: 1.0 });
+          recordingDiv.textContent = `Menampilkan ulang informasi untuk ${productName}`;
+        }
+      });
+      historyList.prepend(li);
+    }
+
+    clearHistoryButton.addEventListener('click', () => {
+      historyList.innerHTML = '';
+      recordingDiv.textContent = 'Histori telah dihapus.';
+    });
 
     startButton.addEventListener('click', async () => {
       await setupWebcam();
@@ -216,6 +331,8 @@
       await predictImage();
       recordingDiv.textContent = "Gambar berhasil dipindai.";
     });
+
+    resetButton.addEventListener('click', resetAll);
   </script>
 </body>
 </html>
