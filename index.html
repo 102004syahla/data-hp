@@ -7,18 +7,18 @@
   <style>
     body {
       font-family: 'Poppins', sans-serif;
-      background: linear-gradient(to bottom right, #fbeaff, #fdf0f0);
+      background: linear-gradient(to right, #ffe0eb, #fff5f9);
       margin: 0;
       padding: 0;
-      color: #3c2a4d;
+      color: #3a1f2b;
       text-align: center;
     }
 
     h1 {
       margin-top: 30px;
-      font-size: 2.7em;
-      color: #6d2e91;
-      text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+      font-size: 3em;
+      color: #d6336c;
+      text-shadow: 1px 2px 4px rgba(0,0,0,0.15);
     }
 
     #buttons {
@@ -26,63 +26,60 @@
     }
 
     button {
-      background: linear-gradient(45deg, #b5838d, #6d597a);
+      background: linear-gradient(45deg, #ffb3c1, #ff7fa2);
       color: white;
       padding: 14px 30px;
       margin: 10px;
       border: none;
-      border-radius: 12px;
-      font-size: 16px;
+      border-radius: 14px;
+      font-size: 17px;
       font-weight: 600;
       cursor: pointer;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 6px 18px rgba(255, 119, 142, 0.2);
       transition: all 0.3s ease-in-out;
     }
 
     button:hover {
-      transform: translateY(-3px);
-      background: linear-gradient(45deg, #6d597a, #b5838d);
+      transform: scale(1.05);
+      background: linear-gradient(45deg, #ff7fa2, #ffb3c1);
     }
 
     #webcam-video {
-      border-radius: 15px;
-      width: 80%;
-      max-width: 600px;
-      margin-top: 20px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      border-radius: 20px;
+      width: 85%;
+      max-width: 620px;
+      margin-top: 25px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
     }
 
     #result, #recording {
-      margin-top: 25px;
-      padding: 20px;
-      background-color: #ffffffcc;
-      border-radius: 10px;
+      margin-top: 30px;
+      padding: 22px;
+      background-color: #fff8fa;
+      border-radius: 16px;
       max-width: 90%;
       margin-left: auto;
       margin-right: auto;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+      font-size: 1.1em;
     }
 
     #product-info {
       margin-top: 30px;
-      padding: 25px;
+      padding: 28px;
       background-color: #ffffff;
-      border-radius: 15px;
-      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.1);
-      width: 90%;
+      border-radius: 18px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+      width: 92%;
       margin-left: auto;
       margin-right: auto;
       color: #4A4E69;
-      transition: 0.3s ease;
-    }
-
-    #product-info:hover {
-      transform: scale(1.01);
     }
 
     .info-item {
-      margin: 10px 0;
-      font-size: 1.1em;
+      margin: 12px 0;
+      font-size: 1.15em;
+      font-weight: 500;
     }
 
     canvas, #loading {
@@ -90,11 +87,11 @@
     }
 
     .loader {
-      border: 4px solid #f3f3f3;
-      border-top: 4px solid #b5838d;
+      border: 5px solid #f3f3f3;
+      border-top: 5px solid #ff7fa2;
       border-radius: 50%;
-      width: 30px;
-      height: 30px;
+      width: 36px;
+      height: 36px;
       animation: spin 1s linear infinite;
       margin: 20px auto;
     }
@@ -105,90 +102,70 @@
     }
 
     #history-section {
-      margin-top: 40px;
-      padding: 20px;
-      background-color: #fff0f5;
-      border-radius: 15px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      width: 90%;
+      margin-top: 45px;
+      padding: 24px;
+      background-color: #ffe0eb;
+      border-radius: 18px;
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.1);
+      width: 92%;
       margin-left: auto;
       margin-right: auto;
       color: #4A4E69;
     }
 
     #history-list li {
-      padding: 8px 12px;
-      margin: 5px 0;
-      background-color: #fbeaff;
-      border-radius: 8px;
+      padding: 10px 16px;
+      margin: 6px 0;
+      background-color: #ffc9de;
+      border-radius: 10px;
       cursor: pointer;
       transition: background-color 0.2s ease;
+      font-weight: 500;
     }
 
     #history-list li:hover {
-      background-color: #e2cfea;
-    }
-
-    #clear-history-button {
-      margin-top: 15px;
-      background-color: #d62828;
-      color: white;
-      border: none;
-      padding: 10px 18px;
-      border-radius: 10px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: 0.3s ease;
-    }
-
-    #clear-history-button:hover {
-      background-color: #a31c1c;
+      background-color: #ffb3c1;
     }
 
     @media (max-width: 600px) {
-      button {
-        width: 90%;
-      }
-
-      h1 {
-        font-size: 2em;
-      }
-
-      #product-info {
-        padding: 15px;
-      }
+      button { width: 90%; }
+      h1 { font-size: 2em; }
+      #product-info { padding: 18px; }
     }
   </style>
 </head>
 <body>
-  <h1>PEMINDAI SPESIFIKASI HP</h1>
+  <h1>🌸 PEMINDAI SPESIFIKASI HP</h1>
 
   <div id="buttons">
-    <button id="start-button">Aktifkan Kamera</button>
-    <button id="capture-button" disabled>Ambil Gambar</button>
-    <button id="reset-button">Reset</button>
+    <button id="start-button">🎥 Aktifkan Kamera</button>
+    <button id="capture-button" disabled>📸 Ambil Gambar</button>
+    <button id="reset-button">♻️ Reset</button>
   </div>
 
   <video id="webcam-video" autoplay playsinline></video>
   <canvas id="canvas" width="320" height="240"></canvas>
   <div id="loading" class="loader"></div>
 
-  <div id="result"><strong>Hasil scan akan muncul di sini.</strong></div>
+  <div id="result"><strong>📍 Hasil scan akan muncul di sini.</strong></div>
   <div id="recording"></div>
 
   <div id="product-info">
-    <h3>Informasi Produk</h3>
+    <h3>📖 Informasi Produk</h3>
     <div id="product-name" class="info-item"></div>
     <div id="product-category" class="info-item"></div>
     <div id="product-price" class="info-item"></div>
     <div id="product-stock" class="info-item"></div>
     <div id="product-description" class="info-item"></div>
+    <div id="datetime" class="info-item"></div>
+    <div id="location" class="info-item"></div>
   </div>
 
   <div id="history-section">
-    <h3>Histori Pencarian</h3>
+    <h3>🕘 Histori Pencarian</h3>
     <ul id="history-list" style="list-style: none; padding: 0;"></ul>
-    <button id="clear-history-button">Hapus Histori</button>
+    <button id="clear-history-button">🗑️ Hapus Histori</button>
+    <button id="export-csv-button">⬇️ Ekspor Histori ke CSV</button>
   </div>
 
   <audio id="success-sound" src="https://www.soundjay.com/buttons/sounds/button-09.mp3" preload="auto"></audio>
@@ -210,30 +187,16 @@
 
     const historyList = document.getElementById('history-list');
     const clearHistoryButton = document.getElementById('clear-history-button');
+    const exportButton = document.getElementById('export-csv-button');
 
     const URL = 'https://teachablemachine.withgoogle.com/models/5s_pRcfX8/';
     let model;
     let isCameraActive = false;
 
     const productDatabase = {
-      "Samsung A13": {
-        camera: "4 MP",
-        releaseYear: 2022,
-        screenSize: "6,6 inch",
-        battery: "5000mAh"
-      },
-      "Samsung 51": {
-        camera: "4 MP",
-        releaseYear: 2019,
-        screenSize: "6,5 inch",
-        battery: "4000mAh"
-      },
-      "Samsung A22": {
-        camera: "4 MP",
-        releaseYear: 2021,
-        screenSize: "6,4 inch",
-        battery: "5000mAh"
-      }
+      "Samsung A13": { camera: "4 MP", releaseYear: 2022, screenSize: "6,6 inch", battery: "5000mAh" },
+      "Samsung 51": { camera: "4 MP", releaseYear: 2019, screenSize: "6,5 inch", battery: "4000mAh" },
+      "Samsung A22": { camera: "4 MP", releaseYear: 2021, screenSize: "6,4 inch", battery: "5000mAh" }
     };
 
     async function setupWebcam() {
@@ -274,15 +237,35 @@
         resultDiv.innerHTML = `<h3>${className} Terdeteksi</h3>`;
         document.getElementById('success-sound').play();
 
+        const p = productDatabase[className];
         document.getElementById('product-name').innerHTML = `<strong>Nama:</strong> ${className}`;
-        document.getElementById('product-category').innerHTML = `<strong>Kamera:</strong> ${productDatabase[className].camera}`;
-        document.getElementById('product-price').innerHTML = `<strong>Tahun Rilis:</strong> ${productDatabase[className].releaseYear}`;
-        document.getElementById('product-stock').innerHTML = `<strong>Ukuran Layar:</strong> ${productDatabase[className].screenSize}`;
-        document.getElementById('product-description').innerHTML = `<strong>Baterai:</strong> ${productDatabase[className].battery}`;
-
+        document.getElementById('product-category').innerHTML = `<strong>Kamera:</strong> ${p.camera}`;
+        document.getElementById('product-price').innerHTML = `<strong>Tahun Rilis:</strong> ${p.releaseYear}`;
+        document.getElementById('product-stock').innerHTML = `<strong>Ukuran Layar:</strong> ${p.screenSize}`;
+        document.getElementById('product-description').innerHTML = `<strong>Baterai:</strong> ${p.battery}`;
+        updateDateTimeLocation();
         addToHistory(className);
       } else {
         resultDiv.innerHTML = `<p>Produk tidak dikenali atau keyakinan rendah.</p>`;
+      }
+    }
+
+    function updateDateTimeLocation() {
+      const now = new Date();
+      const datetime = now.toLocaleString('id-ID');
+      document.getElementById('datetime').textContent = "📆 Waktu Deteksi: " + datetime;
+
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          position => {
+            const lat = position.coords.latitude.toFixed(4);
+            const lon = position.coords.longitude.toFixed(4);
+            document.getElementById('location').textContent = `📍 Lokasi: Lat ${lat}, Long ${lon}`;
+          },
+          () => {
+            document.getElementById('location').textContent = "📍 Lokasi: Tidak diizinkan.";
+          }
+        );
       }
     }
 
@@ -294,15 +277,12 @@
       document.getElementById('product-price').innerHTML = '';
       document.getElementById('product-stock').innerHTML = '';
       document.getElementById('product-description').innerHTML = '';
+      document.getElementById('datetime').innerHTML = '';
+      document.getElementById('location').innerHTML = '';
     }
 
-    function showLoader() {
-      loading.style.display = 'block';
-    }
-
-    function hideLoader() {
-      loading.style.display = 'none';
-    }
+    function showLoader() { loading.style.display = 'block'; }
+    function hideLoader() { loading.style.display = 'none'; }
 
     function addToHistory(productName) {
       const li = document.createElement('li');
@@ -321,9 +301,27 @@
       recordingDiv.textContent = 'Histori telah dihapus.';
     });
 
+    exportButton.addEventListener('click', () => {
+      const rows = [["No", "Nama HP", "Waktu"]];
+      const items = historyList.querySelectorAll("li");
+      items.forEach((li, i) => {
+        const time = new Date().toLocaleString('id-ID');
+        rows.push([i + 1, li.textContent, time]);
+      });
+      const csv = "data:text/csv;charset=utf-8," + rows.map(e => e.join(",")).join("\n");
+      const link = document.createElement("a");
+      link.href = encodeURI(csv);
+      link.download = "histori_pemindaian_hp.csv";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    });
+
     startButton.addEventListener('click', async () => {
       await setupWebcam();
       await loadModel();
+      startButton.disabled = true;
+      startButton.textContent = "✅ Kamera Aktif";
     });
 
     captureButton.addEventListener('click', async () => {
