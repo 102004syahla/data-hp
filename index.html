@@ -7,11 +7,53 @@
   <style>
     body {
       font-family: 'Poppins', sans-serif;
-      background: linear-gradient(to right, #ffe0eb, #fff5f9);
       margin: 0;
       padding: 0;
       color: #3a1f2b;
       text-align: center;
+    }
+
+    #landing-page {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: linear-gradient(to bottom right, #ffe0eb, #fff5f9);
+      padding: 20px;
+    }
+
+    #landing-page h1 {
+      font-size: 3em;
+      margin-bottom: 20px;
+      color: #d6336c;
+    }
+
+    #landing-page p {
+      font-size: 1.2em;
+      margin-bottom: 40px;
+    }
+
+    #start-scan-button {
+      background: linear-gradient(45deg, #ffb3c1, #ff7fa2);
+      color: white;
+      padding: 14px 32px;
+      font-size: 18px;
+      border: none;
+      border-radius: 16px;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(255, 119, 142, 0.2);
+      transition: all 0.3s ease-in-out;
+    }
+
+    #start-scan-button:hover {
+      transform: scale(1.05);
+    }
+
+    #main-page {
+      display: none;
+      background: linear-gradient(to right, #ffe0eb, #fff5f9);
+      padding-bottom: 50px;
     }
 
     h1 {
@@ -41,7 +83,6 @@
 
     button:hover {
       transform: scale(1.05);
-      background: linear-gradient(45deg, #ff7fa2, #ffb3c1);
     }
 
     #webcam-video {
@@ -135,6 +176,16 @@
   </style>
 </head>
 <body>
+
+<!-- Halaman Awal -->
+<div id="landing-page">
+  <h1>🌸 Selamat Datang</h1>
+  <p>Gunakan aplikasi ini untuk memindai dan mengetahui spesifikasi HP langsung dari kamera!</p>
+  <button id="start-scan-button">🚀 Mulai Pemindaian</button>
+</div>
+
+<!-- Halaman Utama -->
+<div id="main-page">
   <h1>🌸 PEMINDAI SPESIFIKASI HP</h1>
 
   <div id="buttons">
@@ -167,170 +218,180 @@
     <button id="clear-history-button">🗑️ Hapus Histori</button>
     <button id="export-csv-button">⬇️ Ekspor Histori ke CSV</button>
   </div>
+</div>
 
-  <audio id="success-sound" src="https://www.soundjay.com/buttons/sounds/button-09.mp3" preload="auto"></audio>
+<audio id="success-sound" src="https://www.soundjay.com/buttons/sounds/button-09.mp3" preload="auto"></audio>
 
-  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.21.0/dist/tf.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8/dist/teachablemachine-image.min.js"></script>
+<!-- Script -->
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.21.0/dist/tf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8/dist/teachablemachine-image.min.js"></script>
 
-  <script>
-    const startButton = document.getElementById('start-button');
-    const captureButton = document.getElementById('capture-button');
-    const resetButton = document.getElementById('reset-button');
+<script>
+window.onload = function() {
+  const landingPage = document.getElementById("landing-page");
+  const mainPage = document.getElementById("main-page");
+  const startScanBtn = document.getElementById("start-scan-button");
 
-    const webcamVideo = document.getElementById('webcam-video');
-    const resultDiv = document.getElementById('result');
-    const recordingDiv = document.getElementById('recording');
-    const canvas = document.getElementById('canvas');
-    const ctx = canvas.getContext('2d');
-    const loading = document.getElementById('loading');
+  const startButton = document.getElementById('start-button');
+  const captureButton = document.getElementById('capture-button');
+  const resetButton = document.getElementById('reset-button');
 
-    const historyList = document.getElementById('history-list');
-    const clearHistoryButton = document.getElementById('clear-history-button');
-    const exportButton = document.getElementById('export-csv-button');
+  const webcamVideo = document.getElementById('webcam-video');
+  const resultDiv = document.getElementById('result');
+  const recordingDiv = document.getElementById('recording');
+  const canvas = document.getElementById('canvas');
+  const ctx = canvas.getContext('2d');
+  const loading = document.getElementById('loading');
 
-    const URL = 'https://teachablemachine.withgoogle.com/models/5s_pRcfX8/';
-    let model;
-    let isCameraActive = false;
+  const historyList = document.getElementById('history-list');
+  const clearHistoryButton = document.getElementById('clear-history-button');
+  const exportButton = document.getElementById('export-csv-button');
 
-    const productDatabase = {
-      "Samsung A13": { camera: "4 MP", releaseYear: 2022, screenSize: "6,6 inch", battery: "5000mAh" },
-      "Samsung 51": { camera: "4 MP", releaseYear: 2019, screenSize: "6,5 inch", battery: "4000mAh" },
-      "Samsung A22": { camera: "4 MP", releaseYear: 2021, screenSize: "6,4 inch", battery: "5000mAh" }
-    };
+  const URL = 'https://teachablemachine.withgoogle.com/models/5s_pRcfX8/';
+  let model;
+  let isCameraActive = false;
 
-    async function setupWebcam() {
-      if (!isCameraActive) {
-        try {
-          const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-          webcamVideo.srcObject = stream;
-          isCameraActive = true;
-          recordingDiv.textContent = "Kamera aktif. Silakan ambil gambar.";
-          captureButton.disabled = false;
-        } catch (err) {
-          alert('Tidak dapat mengakses kamera.');
+  const productDatabase = {
+    "Samsung A13": { camera: "4 MP", releaseYear: 2022, screenSize: "6,6 inch", battery: "5000mAh" },
+    "Samsung 51": { camera: "4 MP", releaseYear: 2019, screenSize: "6,5 inch", battery: "4000mAh" },
+    "Samsung A22": { camera: "4 MP", releaseYear: 2021, screenSize: "6,4 inch", battery: "5000mAh" }
+  };
+
+  async function setupWebcam() {
+    if (!isCameraActive) {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        webcamVideo.srcObject = stream;
+        isCameraActive = true;
+        recordingDiv.textContent = "Kamera aktif. Silakan ambil gambar.";
+        captureButton.disabled = false;
+      } catch (err) {
+        alert('Tidak dapat mengakses kamera.');
+      }
+    }
+  }
+
+  async function loadModel() {
+    const modelURL = URL + "model.json";
+    const metadataURL = URL + "metadata.json";
+    model = await tmImage.load(modelURL, metadataURL);
+  }
+
+  async function predictImage() {
+    showLoader();
+    ctx.drawImage(webcamVideo, 0, 0, canvas.width, canvas.height);
+    const prediction = await model.predict(canvas);
+    hideLoader();
+    if (prediction.length > 0) {
+      const top = prediction.sort((a, b) => b.probability - a.probability)[0];
+      displayResult(top);
+    }
+  }
+
+  function displayResult(prediction) {
+    const className = prediction.className;
+    if (productDatabase[className] && prediction.probability > 0.7) {
+      resultDiv.innerHTML = `<h3>${className} Terdeteksi</h3>`;
+      document.getElementById('success-sound').play();
+
+      const p = productDatabase[className];
+      document.getElementById('product-name').innerHTML = `<strong>Nama:</strong> ${className}`;
+      document.getElementById('product-category').innerHTML = `<strong>Kamera:</strong> ${p.camera}`;
+      document.getElementById('product-price').innerHTML = `<strong>Tahun Rilis:</strong> ${p.releaseYear}`;
+      document.getElementById('product-stock').innerHTML = `<strong>Ukuran Layar:</strong> ${p.screenSize}`;
+      document.getElementById('product-description').innerHTML = `<strong>Baterai:</strong> ${p.battery}`;
+      updateDateTimeLocation();
+      addToHistory(className);
+    } else {
+      resultDiv.innerHTML = `<p>Produk tidak dikenali atau keyakinan rendah.</p>`;
+    }
+  }
+
+  function updateDateTimeLocation() {
+    const now = new Date();
+    const datetime = now.toLocaleString('id-ID');
+    document.getElementById('datetime').textContent = "📆 Waktu Deteksi: " + datetime;
+
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        position => {
+          const lat = position.coords.latitude.toFixed(4);
+          const lon = position.coords.longitude.toFixed(4);
+          document.getElementById('location').textContent = `📍 Lokasi: Lat ${lat}, Long ${lon}`;
+        },
+        () => {
+          document.getElementById('location').textContent = "📍 Lokasi: Tidak diizinkan.";
         }
+      );
+    }
+  }
+
+  function resetAll() {
+    resultDiv.innerHTML = `<strong>Hasil scan akan muncul di sini.</strong>`;
+    recordingDiv.textContent = "";
+    document.getElementById('product-name').innerHTML = '';
+    document.getElementById('product-category').innerHTML = '';
+    document.getElementById('product-price').innerHTML = '';
+    document.getElementById('product-stock').innerHTML = '';
+    document.getElementById('product-description').innerHTML = '';
+    document.getElementById('datetime').innerHTML = '';
+    document.getElementById('location').innerHTML = '';
+  }
+
+  function showLoader() { loading.style.display = 'block'; }
+  function hideLoader() { loading.style.display = 'none'; }
+
+  function addToHistory(productName) {
+    const li = document.createElement('li');
+    li.textContent = productName;
+    li.addEventListener('click', () => {
+      if (productDatabase[productName]) {
+        displayResult({ className: productName, probability: 1.0 });
+        recordingDiv.textContent = `Menampilkan ulang informasi untuk ${productName}`;
       }
-    }
-
-    async function loadModel() {
-      const modelURL = URL + "model.json";
-      const metadataURL = URL + "metadata.json";
-      model = await tmImage.load(modelURL, metadataURL);
-    }
-
-    async function predictImage() {
-      showLoader();
-      ctx.drawImage(webcamVideo, 0, 0, canvas.width, canvas.height);
-      const prediction = await model.predict(canvas);
-      hideLoader();
-
-      if (prediction.length > 0) {
-        const top = prediction.sort((a, b) => b.probability - a.probability)[0];
-        displayResult(top);
-      }
-    }
-
-    function displayResult(prediction) {
-      const className = prediction.className;
-      if (productDatabase[className] && prediction.probability > 0.7) {
-        resultDiv.innerHTML = `<h3>${className} Terdeteksi</h3>`;
-        document.getElementById('success-sound').play();
-
-        const p = productDatabase[className];
-        document.getElementById('product-name').innerHTML = `<strong>Nama:</strong> ${className}`;
-        document.getElementById('product-category').innerHTML = `<strong>Kamera:</strong> ${p.camera}`;
-        document.getElementById('product-price').innerHTML = `<strong>Tahun Rilis:</strong> ${p.releaseYear}`;
-        document.getElementById('product-stock').innerHTML = `<strong>Ukuran Layar:</strong> ${p.screenSize}`;
-        document.getElementById('product-description').innerHTML = `<strong>Baterai:</strong> ${p.battery}`;
-        updateDateTimeLocation();
-        addToHistory(className);
-      } else {
-        resultDiv.innerHTML = `<p>Produk tidak dikenali atau keyakinan rendah.</p>`;
-      }
-    }
-
-    function updateDateTimeLocation() {
-      const now = new Date();
-      const datetime = now.toLocaleString('id-ID');
-      document.getElementById('datetime').textContent = "📆 Waktu Deteksi: " + datetime;
-
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          position => {
-            const lat = position.coords.latitude.toFixed(4);
-            const lon = position.coords.longitude.toFixed(4);
-            document.getElementById('location').textContent = `📍 Lokasi: Lat ${lat}, Long ${lon}`;
-          },
-          () => {
-            document.getElementById('location').textContent = "📍 Lokasi: Tidak diizinkan.";
-          }
-        );
-      }
-    }
-
-    function resetAll() {
-      resultDiv.innerHTML = `<strong>Hasil scan akan muncul di sini.</strong>`;
-      recordingDiv.textContent = "";
-      document.getElementById('product-name').innerHTML = '';
-      document.getElementById('product-category').innerHTML = '';
-      document.getElementById('product-price').innerHTML = '';
-      document.getElementById('product-stock').innerHTML = '';
-      document.getElementById('product-description').innerHTML = '';
-      document.getElementById('datetime').innerHTML = '';
-      document.getElementById('location').innerHTML = '';
-    }
-
-    function showLoader() { loading.style.display = 'block'; }
-    function hideLoader() { loading.style.display = 'none'; }
-
-    function addToHistory(productName) {
-      const li = document.createElement('li');
-      li.textContent = productName;
-      li.addEventListener('click', () => {
-        if (productDatabase[productName]) {
-          displayResult({ className: productName, probability: 1.0 });
-          recordingDiv.textContent = `Menampilkan ulang informasi untuk ${productName}`;
-        }
-      });
-      historyList.prepend(li);
-    }
-
-    clearHistoryButton.addEventListener('click', () => {
-      historyList.innerHTML = '';
-      recordingDiv.textContent = 'Histori telah dihapus.';
     });
+    historyList.prepend(li);
+  }
 
-    exportButton.addEventListener('click', () => {
-      const rows = [["No", "Nama HP", "Waktu"]];
-      const items = historyList.querySelectorAll("li");
-      items.forEach((li, i) => {
-        const time = new Date().toLocaleString('id-ID');
-        rows.push([i + 1, li.textContent, time]);
-      });
-      const csv = "data:text/csv;charset=utf-8," + rows.map(e => e.join(",")).join("\n");
-      const link = document.createElement("a");
-      link.href = encodeURI(csv);
-      link.download = "histori_pemindaian_hp.csv";
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+  startScanBtn.addEventListener("click", async () => {
+    landingPage.style.display = "none";
+    mainPage.style.display = "block";
+    await setupWebcam();
+    await loadModel();
+    startButton.disabled = true;
+    startButton.textContent = "✅ Kamera Aktif";
+  });
+
+  captureButton.addEventListener('click', async () => {
+    recordingDiv.textContent = "Memproses gambar...";
+    await predictImage();
+    recordingDiv.textContent = "Gambar berhasil dipindai.";
+  });
+
+  resetButton.addEventListener('click', resetAll);
+
+  clearHistoryButton.addEventListener('click', () => {
+    historyList.innerHTML = '';
+    recordingDiv.textContent = 'Histori telah dihapus.';
+  });
+
+  exportButton.addEventListener('click', () => {
+    const rows = [["No", "Nama HP", "Waktu"]];
+    const items = historyList.querySelectorAll("li");
+    items.forEach((li, i) => {
+      const time = new Date().toLocaleString('id-ID');
+      rows.push([i + 1, li.textContent, time]);
     });
+    const csv = "data:text/csv;charset=utf-8," + rows.map(e => e.join(",")).join("\n");
+    const link = document.createElement("a");
+    link.href = encodeURI(csv);
+    link.download = "histori_pemindaian_hp.csv";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  });
+};
+</script>
 
-    startButton.addEventListener('click', async () => {
-      await setupWebcam();
-      await loadModel();
-      startButton.disabled = true;
-      startButton.textContent = "✅ Kamera Aktif";
-    });
-
-    captureButton.addEventListener('click', async () => {
-      recordingDiv.textContent = "Memproses gambar...";
-      await predictImage();
-      recordingDiv.textContent = "Gambar berhasil dipindai.";
-    });
-
-    resetButton.addEventListener('click', resetAll);
-  </script>
 </body>
 </html>
